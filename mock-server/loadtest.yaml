@@ -1,0 +1,39 @@
+defaults:
+  connections: 50
+  duration: "10s"
+  timeout: "5s"
+  ramp-up: "3s"
+
+groups:
+  - name: "API endpoints"
+    connections: 100
+    duration: "10s"
+    ramp-up: "5s"
+    endpoints:
+      - url: "http://127.0.0.1:8080/users"
+        method: GET
+        weight: 50
+      - url: "http://127.0.0.1:8080/orders"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"item":"widget","qty":3}'
+        weight: 30
+      - url: "http://127.0.0.1:8080/health"
+        weight: 20
+
+  - name: "Static assets"
+    connections: 30
+    duration: "10s"
+    endpoints:
+      - url: "http://127.0.0.1:8080/style.css"
+        weight: 60
+      - url: "http://127.0.0.1:8080/app.js"
+        weight: 40
+
+  - name: "Flaky endpoint"
+    connections: 20
+    duration: "10s"
+    endpoints:
+      - url: "http://127.0.0.1:8080/flaky"
+        weight: 1
